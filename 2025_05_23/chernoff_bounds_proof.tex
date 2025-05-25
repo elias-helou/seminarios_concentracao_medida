@@ -69,7 +69,7 @@ A probabilidade da proporção de sucessos \(\frac{X}{n}\) ultrapassar a média 
 
 Em \((*)\) utilizou-se o fato de que a exponencial é uma função crescente, e em \((**)\) utilizou-se a desigualdade de Markov para variáveis não-negativas, visto que \(X_i\in\{0,1\}\subseteq\mathbb{R}_{\geq 0}\).
 
-Observe que a expressão de \(f(\lambda) = \left(\frac{pe^\lambda+q}{e^{\lambda(p+t}}\right)^n\) é mínima para \(\lambda^\star\) dado por
+Observe que a expressão de \(f(\lambda) = \left(\frac{pe^\lambda+q}{e^{\lambda(p+t)}}\right)^n\) é mínima para \(\lambda^\star\) dado por
 \[
 \lambda^\star = \underset{\lambda > 0}{\mathrm{argmin}}\{f(\lambda)\} = \underset{\lambda > 0}{\mathrm{argmin}}\bigg\{\underbracket{\frac{1}{n}\log(f(\lambda))}_{h(\lambda)}\bigg\} = \underset{\lambda > 0}{\mathrm{argmin}}\{\underbracket{\sqrt[n]{f(\lambda)}}_{g(\lambda)}\}  \overset{g \text{ conv.}}{\iff} \frac{\mathrm d}{\mathrm d\lambda} h(\lambda^\star) = 0. 
 \]
