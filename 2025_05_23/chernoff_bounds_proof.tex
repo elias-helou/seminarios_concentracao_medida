@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage[portuguese]{babel}
+\usepackage{amsmath, amssymb, mathtools}
+\usepackage{comment}
+\title{Demonstração do limite de Chernoff}
+\author{Iaago Ariel Schwoelk Lobo}
+\date{\today}
+
+\newcommand{\pr}[2]{\mathrm{P[}#1 = #2\mathrm{]}}
+\newcommand{\esp}[1]{\mathrm{E[}\mathrm{]}}
+\newcommand{\expo}[1]{\mathrm{exp[}#1\mathrm{]}}
+\newcommand{\dsum}[1]{\displaystyle\sum}
+
+\begin{document}
+
+\maketitle
+
+\section*{Resultados preliminares}
+
+Seja \(X \sim B(n,p)\) uma variável binomial definida por
+
+\begin{equation}\label{def:X}
+	X = \displaystyle\sum_{i\in[n]}X_i,\quad\text{ com }
+     \Pr[X_i = x]=\begin{cases}
+        p&\text{ se }x = 1\\
+        1-p&\text{ se }x = 0\\
+        0&\text{ se }x\notin\{0,1\}.
+    \end{cases}
+\end{equation}
+
+Observe que para cada \(X_i\) e qualquer função \(f:\{0,1\}\to\mathbb{R}\), o valor esperado \(\mathrm E (f(X_1))\) é dado por
+
+\begin{equation}\label{prop:1}
+	\mathrm E (f(X_i)) = \Pr[X_i = 1]f(1) + \Pr[X_1 = 0]f(0) \overset{\eqref{def:X}}{=} pf(1) + qf(0).
+\end{equation}
+
+Verificamos que \(\mathrm{E}[e^{\lambda X}] = (pe^{\lambda} + q)^n\) pela seguinte computação, onde \(\exp(x) = e^x\).
+
+\begin{equation}
+	\begin{array}{rcl}
+		\mathrm{E}[e^{\lambda X}] & = & \mathrm{E}[\exp(\lambda X)]\\ [1em]
+		& \overset{\eqref{def:X}}{=} & \mathrm E\bigg[\exp{\bigg(\lambda \displaystyle\sum_{i=1}^n X_i\bigg)}\bigg]\\[1em]
+		& = & \mathrm E\bigg[\displaystyle\prod_{i=1}^n \exp(\lambda X_i)\bigg]\\[1em]
+		& \overset{(*)}{=} & \displaystyle\prod_{i=1}^n \mathrm E[\exp(\lambda X_i)]\\[1em]
+		& \overset{\eqref{prop:1}}{=} & \displaystyle\prod_{i=1}^n \bigg[p\exp(\lambda \cdot 1) + q \exp(\lambda \cdot 0)\bigg]\\[1em]
+		& = & \displaystyle\prod_{i=1}^n \bigg[pe^\lambda + q\bigg]\\[1.75em]
+		& = & (pe^\lambda + q)^n .
+	\end{array}
+\end{equation}
+
+Em \((*)\) utilizou-se a \emph{multiplicatividade} do valor esperado para variáveis independentes, isto é, \(\mathrm{E}\left[XY\right] = \mathrm{E}\left[X\right]\mathrm{E}\left[Y\right]\) para \(X\) e \(Y\) i.i.d. 
+
+\newpage
+
+\section*{O limitante de Chernoff}
+
+A probabilidade da proporção de sucessos \(\frac{X}{n}\) ultrapassar a média \(\mathrm E\left[\frac{X}{n}\right] = p\) por pelo menos uma margem \(t\) é dada por
+
+\begin{equation}\label{calc:prob}
+	\begin{array}{rcl}
+		\Pr\left[\frac{X}{n} > p + t\right] & = & \Pr[X > (p+t)n]\\[1em]
+		& \overset{\lambda > 0}{=} & \Pr\left[\lambda X > \lambda (p+t)n\right]\\[1em]
+		& \overset{(*)}{=} & \Pr\left[e^{\lambda X} > e^{ \lambda (p+t) n}\right]\\[1em]
+		& \overset{(**)}{\leq} & \frac{\mathrm E \left[e^{\lambda X}\right]}{ e^{\lambda(p+t)n}}\\[1em]
+		& = & \frac{\left(pe^{\lambda}+q\right)^n}{e^{\lambda(p+t)n}}\\[1em]
+		& = & \left(\frac{pe^{\lambda}+q}{e^{\lambda(p+t)}}\right)^n.
+	\end{array}
+\end{equation}
+
+Em \((*)\) utilizou-se o fato de que a exponencial é uma função crescente, e em \((**)\) utilizou-se a desigualdade de Markov para variáveis não-negativas, visto que \(X_i\in\{0,1\}\subseteq\mathbb{R}_{\geq 0}\).
+
+Observe que a expressão de \(f(\lambda) = \left(\frac{pe^\lambda+q}{e^{\lambda(p+t}}\right)^n\) é mínima para \(\lambda^\star\) dado por
+\[
+\lambda^\star = \underset{\lambda > 0}{\mathrm{argmin}}\{f(\lambda)\} = \underset{\lambda > 0}{\mathrm{argmin}}\bigg\{\underbracket{\frac{1}{n}\log(f(\lambda))}_{h(\lambda)}\bigg\} = \underset{\lambda > 0}{\mathrm{argmin}}\{\underbracket{\sqrt[n]{f(\lambda)}}_{g(\lambda)}\}  \overset{g \text{ conv.}}{\iff} \frac{\mathrm d}{\mathrm d\lambda} h(\lambda^\star) = 0. 
+\]
+
+Como \(g(\lambda) = (f(\lambda))^{1/n}\) é uma função convexa e \(\sqrt[n]{\cdot}\) é monótona crescente em \(\mathbb{R}_{>0}\), o minimizador de \(g(\lambda)\) é único, e também minimiza \(f(\lambda)\) e \(h(\lambda)=\frac{1}{n}\log(f(\lambda))\). Desse modo, é suficiente que \(\lambda^\star\) satisfaça a condição de estacionaridade para qualquer uma das funções. Por conveniência, aplicamos a análise de estacionaridade sobre \(\frac{1}{n}\log(f(\lambda))\).
+
+\begin{equation}\notag
+	\begin{array}{rcl}
+		0 & = & \frac{\mathrm d}{\mathrm d\lambda} \big[\frac{1}{n}\log(f({\lambda^\star}))\big]\\[1em]
+		& = & \frac{1}{n}\frac{\mathrm d}{\mathrm d\lambda} \bigg[\log\Big(\big(\frac{pe^{\lambda^\star}+q}{e^{{\lambda^\star}(p+t)}}\big)^n\Big)\bigg]\\[1em]
+		& = & \frac{1}{n}\frac{\mathrm d}{\mathrm d\lambda} n\bigg[\log\big(pe^{\lambda^\star} + q\big) - \log\big(e^{{\lambda^\star}(p+t)}\big)\bigg]\\[1em]
+		& = & \frac{\mathrm d}{\mathrm d\lambda}[\log(pe^{\lambda^\star} + q) - {\lambda^\star}(p+t)]\\[1em]
+		& = & \frac{pe^{\lambda^\star}}{pe^{\lambda^\star} + q} - (p+t)\\[1em]
+		& = & \frac{pe^{\lambda^\star}}{p\big(e^{\lambda^\star} + \frac{q}{p}\big)} - (p+t)\\[1em]
+		& = & \frac{e^{\lambda^\star}}{e^{\lambda^\star} + \frac{q}{p}} - (p+t)
+	\end{array}
+\end{equation}
+
+Isolamos \(e^{\lambda^\star}\) da expressão anterior.
+
+\begin{equation}
+	\begin{array}{rcl}
+		0 = \frac{e^{\lambda^\star}}{e^{\lambda^\star} + \frac{q}{p}} - (p+t) & \implies &	p+t = \frac{e^{\lambda^\star}}{e^{\lambda^\star} + \frac{q}{p}}\\[1em]
+		& \implies & (p+t)e^{\lambda^\star} + \frac{q}{p}(p+t) = e^{\lambda^\star}\\[1em]
+		& \implies & \frac{q}{p}(p+t) = e^{\lambda^\star}(1-p-t)\\[1em]
+		& \implies & e^{\lambda^\star} = \frac{q(p+t)}{p(1-p-t)}\\[1em]
+		& \overset{1-p = q}{\implies} & e^{\lambda^\star} = \frac{q(p+t)}{p(q-t)} = \big(\frac{p+t}{p}\big)\big(\frac{q}{q-t}\big).
+	\end{array}
+\end{equation} 
+
+Portanto temos \(e^{\lambda^\star}=\left(\frac{p}{p+t}\right)^{-1}\left(\frac{q}{q-t}\right)\) e \(e^{-\lambda^\star}=\left(\frac{p}{p+t}\right)\left(\frac{q}{q-t}\right)^{-1}\).
+
+\hfill
+
+Utilizando o resultado anterior e a desigualdade \(\eqref{calc:prob}\).
+
+\begin{equation}\notag
+    \begin{array}{rcl}
+        \Pr\left[\frac{X}{n} > p + t \right] 
+          & \leq & \left(\frac{pe^\lambda+q}{e^{\lambda(p+t)}}\right)^n,\quad \lambda > 0 \\[1em]
+          & \leq & \left(\frac{pe^{\lambda^\star}+q}{e^{\lambda^\star(p+t)}}\right)^n\\[1em]
+          & = & \left(\left(\frac{q}{q-t}\right)\left(\frac{p(q-t)}{q}e^{\lambda^\star}+q-t\right)\left(e^{-\lambda^\star}\right)^{p+t}\right)^n\\[1em]
+          & = & \left(\left(\frac{q}{q-t}\right)\left(\frac{p(q-t)}{q}\frac{(p+t)q}{p(q-t)}+q-t\right)\left(e^{-\lambda^\star}\right)^{p+t}\right)^n\\[1em]
+          & = & \left(\left(\frac{q}{q-t}\right)\left(p+t+q-t\right)\left(e^{-\lambda^\star}\right)^{p+t}\right)^n\\[1em]
+          & = & \left(\left(\frac{q}{q-t}\right)\left(p+q\right)\left(e^{-\lambda^\star}\right)^{p+t}\right)^n\\[1em]
+          & = & \left(\left(\frac{q}{q-t}\right)\left(p+1-p\right)\left(e^{-\lambda^\star}\right)^{p+t}\right)^n\\[1em]
+          & = & \left(\left(\frac{q}{q-t}\right)\left(e^{-\lambda^\star}\right)^{p+t}\right)^n\\[1em]
+          & = & \left(\left(\frac{q}{q-t}\right)\left(\frac{p}{p+t}\right)^{p+t}\left(\frac{q}{q-t}\right)^{-p-t}\right)^n\\[1em]
+          & = & \left(\left(\frac{p}{p+t}\right)^{p+t}\left(\frac{q}{q-t}\right)^{1-p-t}\right)^n\\[1em]
+          & = & \left(\left(\frac{p}{p+t}\right)^{p+t}\left(\frac{q}{q-t}\right)^{q-t}\right)^n.
+    \end{array}
+\end{equation}
+
+A expressão \(\left(\left(\frac{p}{p+t}\right)^{p+t}\left(\frac{q}{q-t}\right)^{q-t}\right)^n\) é chamada de \emph{limitante de Chernoff}.
+
+\newpage
+
+\section*{Convexidade de \(g(\lambda)\)}
+
+Verificamos a convexidade de \(g(\lambda)\) abaixo.
+
+\begin{equation}
+	\begin{array}{rcl}
+		g(\lambda) & = & (pe^{\lambda} + q)e^{-\lambda(p+t)},\\[0.75em]
+		g'(\lambda) & = & \bigl(pe^{\lambda} - (pe^{\lambda}+q)(p+t)\bigr)e^{-\lambda(p+t)},\\[0.75em]
+		g''(\lambda) & = & \bigl[(p+t)^2(pe^{\lambda}+q)-p(p+t)e^{\lambda}+pe^{\lambda}(1-p-t)\bigr]e^{-\lambda(p+t)},\\[0.75em]
+		& = & \bigl[(p+t)^2q +pe^{\lambda}\bigl((p+t)^2 -2(p+t)+1\bigr)\bigr]e^{-\lambda(p+t)},\\[0.75em]
+		& = & \bigl[(p+t)^2q +pe^{\lambda}( (p+t)-1 )^2\bigr]e^{-\lambda(p+t)}\\[0.75em]
+		& \geq & 0.
+	\end{array}
+\end{equation}
+Note que \(p\) e \(q\) são não negativos e portanto a penúltima expressão é o produto de fatores não negativos. Como a hessiana (no caso, segunda derivada) é semidefinida positiva temos que \(g(\lambda)\) é convexa.
+
+
+
+\end{document}
